@@ -25,7 +25,9 @@ namespace InvoiceGenerator.Core.Services
 
         public Invoice GenerateQuote(Invoice invoice)
         {
-            return invoice;
+            return invoice; //Something here is not right!
+            /*
+             * Documents and Settings*/
         }
     }
 }
