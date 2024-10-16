@@ -12,22 +12,20 @@ namespace InvoiceGenerator.Core.Services
 
         public InvoiceDetails CalculateServicesCost(InvoiceDetails invoiceDetails)
         {
-            foreach (var service in invoiceDetails.Services)
+            foreach (var service in invoiceDetails.InvoiceLineItems!)
             {
-                service.Total = service.Quantity * service.UnitPrice;
-                invoiceDetails.SubTotal += service.Total;
+                // service.Total = service.Quantity * service.UnitPrice;
+                // invoiceDetails.SubTotal += service.Total;
             }
 
-            invoiceDetails.Total = invoiceDetails.SubTotal + invoiceDetails.IVA;
+            invoiceDetails.Total = invoiceDetails.SubTotal + invoiceDetails.Tax;
 
             return invoiceDetails;
         }
 
         public Invoice GenerateQuote(Invoice invoice)
         {
-            return invoice; //Something here is not right!
-            /*
-             * Documents and Settings*/
+            return invoice;
         }
     }
 }

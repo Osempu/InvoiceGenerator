@@ -1,6 +1,6 @@
 using InvoiceGenerator.Core.Models;
 
-namespace InvoiceGenerator.Core.Contracts
+namespace InvoiceGenerator.Application.Contracts
 {
     public interface IInvoiceRepository
     {

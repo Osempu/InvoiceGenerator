@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceGenerator.Infrastructure.Repositories
 {
-    public class ClientRepository : IClientRepository
+    public class ClientRepository : ICustomerRepository
     {
         private readonly AppDbContext context;
         public ClientRepository(AppDbContext context)
@@ -13,39 +13,39 @@ namespace InvoiceGenerator.Infrastructure.Repositories
             this.context = context;
         }
 
-        public async Task<Client> CreateClientAsync(Client client)
+        public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            var newClient = context.Add(client).Entity;
+            var newCustomer = context.Add(customer).Entity;
             await context.SaveChangesAsync();
-            return newClient;
+            return newCustomer;
         }
 
-        public async Task DeleteClientAsync(int id)
+        public async Task DeleteCustomerAsync(int id)
         {
-            var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == id);
-            context.Remove(client);
+            var Customer = await context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+            context.Remove(Customer);
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Client>> GetAllClientsAsync()
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
         {
-            var clients = await context.Clients.AsNoTracking()
+            var customers = await context.Customers.AsNoTracking()
                                                 .ToListAsync();
-            return clients;
+            return customers;
         }
 
-        public async Task<Client> GetClientAsync(int id)
+        public async Task<Customer> GetCustomerAsync(int id)
         {
-            var client = await context.Clients.AsNoTracking()
+            var customer = await context.Customers.AsNoTracking()
                                                 .FirstOrDefaultAsync(x => x.Id == id);
-            return client;
+            return customer;
         }
 
-        public async Task<Client> UpdateClientASync(Client client)
+        public async Task<Customer> UpdateCustomerASync(Customer customer)
         {
-            context.Entry(client).State = EntityState.Modified;
+            context.Entry(customer).State = EntityState.Modified;
             await context.SaveChangesAsync();
-            return client;
+            return customer;
         }
     }
 }

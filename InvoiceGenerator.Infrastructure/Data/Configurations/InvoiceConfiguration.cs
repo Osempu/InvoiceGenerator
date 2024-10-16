@@ -18,9 +18,9 @@ namespace InvoiceGenerator.Infrastructure.Data.Configurations
                     .IsRequired()
                     .HasDefaultValue(DateOnly.FromDateTime(DateTime.Now.AddDays(9)));
             
-            builder.HasOne(x => x.Client)
+            builder.HasOne(x => x.Customer)
                     .WithMany(x => x.Invoices)
-                    .HasForeignKey(x => x.ClientId);
+                    .HasForeignKey(x => x.CustomerId);
 
             builder.HasOne(x => x.InvoiceDetails)
                     .WithOne( x=> x.Invoice);
