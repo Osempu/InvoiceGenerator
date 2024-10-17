@@ -23,4 +23,7 @@ public class Address(
     //Customer
     public int CustomerId { get; set; }
     public Customer? Customer { get; set; }
+
+    //Invoice Details Collection
+    public ICollection<InvoiceDetails>? InvoiceDetails { get; set; }
 }

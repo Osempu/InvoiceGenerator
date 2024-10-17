@@ -1,3 +1,4 @@
+using InvoiceGenerator.Application.Contracts;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.Core.Models;
 using InvoiceGenerator.Infrastructure.Data;

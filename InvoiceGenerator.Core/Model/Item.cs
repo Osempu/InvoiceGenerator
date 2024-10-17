@@ -1,3 +1,5 @@
+using InvoiceGenerator.Core.Model;
+
 namespace InvoiceGenerator.Core.Models
 {
     public class Item
@@ -6,5 +8,7 @@ namespace InvoiceGenerator.Core.Models
         public string Name { get; set; } = string.Empty;
         public string? Details { get; set; }
         public decimal Price { get; set; }
+
+        public ICollection<InvoiceLineItem>? InvoiceLineItems { get; set; }
     }
 }
