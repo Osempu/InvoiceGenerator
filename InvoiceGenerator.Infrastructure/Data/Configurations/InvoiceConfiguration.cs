@@ -34,7 +34,7 @@ namespace InvoiceGenerator.Infrastructure.Data.Configurations
 
             builder.HasOne(x => x.InvoiceDetails)
                     .WithOne( x=> x.Invoice)
-                    .HasForeignKey<InvoiceDetails>(x => x.Id)
+                    .HasForeignKey<InvoiceDetails>(x => x.InvoiceId)
                     .OnDelete(DeleteBehavior.Cascade);
                     
         }

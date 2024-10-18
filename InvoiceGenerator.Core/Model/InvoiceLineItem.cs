@@ -11,9 +11,9 @@ public class InvoiceLineItem
 
     //Item
     public int ItemId { get; set; }
-    public required Item Item { get; set; }
+    public Item? Item { get; set; }
     
     //Invoice Details
     public int InvoiceDetailsId { get; set; }
-    public required InvoiceDetails InvoiceDetails { get; set; }
+    public InvoiceDetails? InvoiceDetails { get; set; }
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceGenerator.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241017032805_Added Configurations for customer, Invoice, Invoice details, Item, LineItem & Address")]
-    partial class AddedConfigurationsforcustomerInvoiceInvoicedetailsItemLineItemAddress
+    [Migration("20241018035231_Initial migration")]
+    partial class Initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,14 +28,17 @@ namespace InvoiceGenerator.Infrastructure.Migrations
 
                     b.Property<string>("AddressType")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("City")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CustomerId")
@@ -43,24 +46,28 @@ namespace InvoiceGenerator.Infrastructure.Migrations
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("State")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Street")
                         .IsRequired()
+                        .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Street2")
+                        .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Model.InvoiceLineItem", b =>
@@ -84,7 +91,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("InvoiceLineItems");
+                    b.ToTable("InvoiceLineItems", (string)null);
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Models.Customer", b =>
@@ -94,14 +101,17 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Models.Invoice", b =>
@@ -111,7 +121,9 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue(new DateOnly(2024, 10, 17));
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
@@ -121,22 +133,19 @@ namespace InvoiceGenerator.Infrastructure.Migrations
 
                     b.Property<string>("Identifier")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("InvoiceDetailsId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateOnly>("ValidStartDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue(new DateOnly(2024, 10, 17));
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("InvoiceDetailsId")
-                        .IsUnique();
-
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Models.InvoiceDetails", b =>
@@ -148,20 +157,29 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                     b.Property<int>("BillingAddressId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<decimal>("SubTotal")
+                        .HasPrecision(12, 2)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Tax")
+                        .HasPrecision(12, 2)
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Total")
+                        .HasPrecision(12, 2)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BillingAddressId");
 
-                    b.ToTable("InvoiceDetails");
+                    b.HasIndex("InvoiceId")
+                        .IsUnique();
+
+                    b.ToTable("InvoiceDetails", (string)null);
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Models.Item", b =>
@@ -171,18 +189,21 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Details")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(12, 2)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Model.Address", b =>
@@ -223,15 +244,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceGenerator.Core.Models.InvoiceDetails", "InvoiceDetails")
-                        .WithOne("Invoice")
-                        .HasForeignKey("InvoiceGenerator.Core.Models.Invoice", "InvoiceDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
-
-                    b.Navigation("InvoiceDetails");
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Models.InvoiceDetails", b =>
@@ -242,7 +255,15 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("InvoiceGenerator.Core.Models.Invoice", "Invoice")
+                        .WithOne("InvoiceDetails")
+                        .HasForeignKey("InvoiceGenerator.Core.Models.InvoiceDetails", "InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("BillingAddress");
+
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("InvoiceGenerator.Core.Model.Address", b =>
@@ -257,10 +278,13 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                     b.Navigation("Invoices");
                 });
 
+            modelBuilder.Entity("InvoiceGenerator.Core.Models.Invoice", b =>
+                {
+                    b.Navigation("InvoiceDetails");
+                });
+
             modelBuilder.Entity("InvoiceGenerator.Core.Models.InvoiceDetails", b =>
                 {
-                    b.Navigation("Invoice");
-
                     b.Navigation("InvoiceLineItems");
                 });
 

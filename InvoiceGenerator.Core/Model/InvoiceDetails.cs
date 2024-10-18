@@ -4,7 +4,7 @@ namespace InvoiceGenerator.Core.Models
 {
     public class InvoiceDetails
     {
-    public int Id { get; set; }
+        public int Id { get; set; }
         public decimal SubTotal { get; set; }
         public int Tax { get;  set;}
         public decimal Total { get; set; }
@@ -17,6 +17,7 @@ namespace InvoiceGenerator.Core.Models
         public ICollection<InvoiceLineItem>? InvoiceLineItems { get; set; }
         
         //Invoice
+        public int InvoiceId { get; set; }
         public Invoice? Invoice { get; set; }
     }
 }

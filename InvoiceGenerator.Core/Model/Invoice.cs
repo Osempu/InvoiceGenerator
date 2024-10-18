@@ -13,7 +13,6 @@ namespace InvoiceGenerator.Core.Models
         public Customer? Customer { get; set; }
 
         //Invoice Details
-        public int InvoiceDetailsId { get; set; }
         public InvoiceDetails? InvoiceDetails { get; set; }
     }
 }
