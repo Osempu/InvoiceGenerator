@@ -5,63 +5,70 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace InvoiceGenerator.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241018035558_Added seeding for all entities")]
-    partial class Addedseedingforallentities
+    [Migration("20241020123039_Initial Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("InvoiceGenerator.Core.Model.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AddressType")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<string>("Street2")
                         .HasMaxLength(300)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(300)");
 
                     b.HasKey("Id");
 
@@ -172,16 +179,18 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("InvoiceDetailsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -352,16 +361,18 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(250)");
 
                     b.HasKey("Id");
 
@@ -404,28 +415,30 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateOnly>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValue(new DateOnly(2024, 10, 17));
+                        .HasColumnType("date")
+                        .HasDefaultValue(new DateOnly(2024, 10, 20));
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateOnly>("DueDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("date");
 
                     b.Property<string>("Identifier")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateOnly>("ValidStartDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValue(new DateOnly(2024, 10, 17));
+                        .HasColumnType("date")
+                        .HasDefaultValue(new DateOnly(2024, 10, 20));
 
                     b.HasKey("Id");
 
@@ -437,7 +450,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 1,
                             DueDate = new DateOnly(2024, 11, 18),
                             Identifier = "INV-467958",
@@ -446,7 +459,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 1,
                             DueDate = new DateOnly(2024, 11, 16),
                             Identifier = "INV-134678",
@@ -455,7 +468,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 2,
                             DueDate = new DateOnly(2024, 11, 14),
                             Identifier = "INV-258795",
@@ -464,7 +477,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 3,
                             DueDate = new DateOnly(2024, 11, 18),
                             Identifier = "INV-462579",
@@ -473,7 +486,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 3,
                             DueDate = new DateOnly(2024, 11, 18),
                             Identifier = "INV-231645",
@@ -482,7 +495,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 4,
                             DueDate = new DateOnly(2024, 11, 13),
                             Identifier = "INV-465281",
@@ -491,7 +504,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 4,
                             DueDate = new DateOnly(2024, 11, 13),
                             Identifier = "INV-356891",
@@ -500,7 +513,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 4,
                             DueDate = new DateOnly(2024, 11, 16),
                             Identifier = "INV-197846",
@@ -509,7 +522,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 5,
                             DueDate = new DateOnly(2024, 11, 19),
                             Identifier = "INV-1387541",
@@ -518,7 +531,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 5,
                             DueDate = new DateOnly(2024, 11, 19),
                             Identifier = "INV-978548",
@@ -527,7 +540,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 5,
                             DueDate = new DateOnly(2024, 11, 10),
                             Identifier = "INV-159632",
@@ -536,7 +549,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2024, 10, 20),
                             CustomerId = 2,
                             DueDate = new DateOnly(2024, 11, 7),
                             Identifier = "INV-1547862",
@@ -548,25 +561,27 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillingAddressId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(12, 2)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric(12,2)");
 
                     b.Property<int>("Tax")
                         .HasPrecision(12, 2)
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Total")
                         .HasPrecision(12, 2)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric(12,2)");
 
                     b.HasKey("Id");
 
@@ -692,20 +707,22 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Details")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(250)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(12, 2)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric(12,2)");
 
                     b.HasKey("Id");
 
@@ -717,7 +734,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                             Id = 1,
                             Details = "Reparacion, mantenimiento, etc",
                             Name = "Reparacion de Grua",
-                            Price = 8999.99m
+                            Price = 8999m
                         },
                         new
                         {
@@ -731,28 +748,28 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                             Id = 3,
                             Details = "Pintura a grua",
                             Name = "Capa de Pintura a Grua",
-                            Price = 4500.00m
+                            Price = 4500m
                         },
                         new
                         {
                             Id = 4,
                             Details = "Reparaciones para modulos electricos",
                             Name = "Reparaciones electricas",
-                            Price = 15000.00m
+                            Price = 15000m
                         },
                         new
                         {
                             Id = 5,
                             Details = "Maquinados chidos",
                             Name = "Maquinados perrones",
-                            Price = 1799.99m
+                            Price = 1799m
                         },
                         new
                         {
                             Id = 6,
                             Details = "Transportacion de maquinaria a toda la ciudad",
                             Name = "Transporte de Maquinaria",
-                            Price = 10000.00m
+                            Price = 10000m
                         });
                 });
 

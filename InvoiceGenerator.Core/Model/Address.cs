@@ -41,4 +41,9 @@ public class Address
         AddressType = addressType;
         CustomerId = customerId;
     }
+
+    public Address(): this(0, "", "", "", "", "", "", 0)
+    {
+        
+    }
 }

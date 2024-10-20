@@ -8,9 +8,12 @@ namespace InvoiceGenerator.Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {
+
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlite("DataSource = Demo.db");
+            options.UseNpgsql("Server=localhost;Database=InvoiceDb;Port=5432;User Id =postgres;Password=$Oscared94;")
+                    .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name })
+                    .EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
