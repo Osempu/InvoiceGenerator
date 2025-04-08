@@ -1,15 +1,16 @@
 using InvoiceGenerator.Core.Requests.CustomerRequests;
-using InvoiceGenerator.Core.Requests.AddressRequests;
+using InvoiceGenerator.Core.Responses.ResultType;
+using InvoiceGenerator.API.Extensions;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.Core.Requests;
-using InvoiceGenerator.Core.Mappings;
+using Microsoft.AspNetCore.Mvc;
 using Carter;
 
 namespace InvoiceGenerator.API.Endpoints;
 
 public class CustomersModule : CarterModule
 {
-    public CustomersModule() :base("api/customers")
+    public CustomersModule() : base("api/customers")
     {
         WithTags("Customers");
         IncludeInOpenApi();
@@ -18,33 +19,56 @@ public class CustomersModule : CarterModule
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
         //Get All Customers
-        app.MapGet("/customers", async (ICustomerService customerService) => {
-            var customers = await customerService.GetAllCustomers();
-            return Results.Ok(customers);
-        }).WithOpenApi();
+        app.MapGet("/", async ([FromServices] ICustomerService customerService, [FromServices] ILogger<CustomersModule> logger) =>
+        {
+            var serviceResult = await customerService.GetAllCustomers();
+            logger.LogInformation("Get All Customers");
+            return Results.Ok(serviceResult.Value);
+        });
 
         //Get Customer By Id
-        app.MapGet("/customers/{id}", async (ICustomerService customerService, int id) => {
-            var customer = await customerService.GetCustomerAsync(id);
-            return Results.Ok(customer);
-        }).WithOpenApi().WithName("GetCustomerById");
+        app.MapGet("/{id}", async (ICustomerService customerService, int id) =>
+        {
+            var serviceResult = await customerService.GetCustomerAsync(id);
+
+            return serviceResult.Match(
+                    success: (customer) => Results.Ok(customer),
+                    failure: (error) => serviceResult.ToProblemDetails());
+        }).WithName("GetCustomerById");
 
         //Create Customer
-        app.MapPost("/customers", async (ICustomerService customerService, CreateCustomerRequestDto customerDto) => {
-            var newCustomer = await customerService.CreateCustomer(customerDto);
-            return Results.CreatedAtRoute("GetCustomerById", new {id = newCustomer.Id}, newCustomer);
-        }).WithOpenApi();
+        app.MapPost("/", async (ICustomerService customerService, [FromBody] CreateCustomerRequestDto customerDto) =>
+        {
+            var serviceResult = await customerService.CreateCustomer(customerDto);
+            return serviceResult.Match(
+                success: () => Results.CreatedAtRoute("GetCustomerById", new { id = serviceResult.Value.Id }, serviceResult.Value),
+                failure: error => serviceResult.ToProblemDetails()
+            );
+        });
 
         //Update Customer
-        app.MapPut("/customers/{id}", async (ICustomerService customerService,int customerId, UpdateCustomerRequestDto customerDto) => {
-            var updatedCustomer = await customerService.UpdateCustomer(customerDto.Id, customerDto);
-            return Results.NoContent();
+        app.MapPut("/{id}", async (ICustomerService customerService, int id, [FromBody] UpdateCustomerRequestDto customerDto) =>
+        {
+            var serviceResult = await customerService.UpdateCustomer(customerDto.Id, customerDto);
+
+            serviceResult.Match(
+                success: () => Results.NoContent(),
+                failure: error => serviceResult.ToProblemDetails()
+            );
         });
 
         //Delete Customer
-        app.MapDelete("/customer/{id}", async (ICustomerService customerService, int customerId) => {
-            await customerService.DeleteCustomer(customerId);
-            return Results.NoContent();
+        app.MapDelete("/{id}", async (ICustomerService customerService, int id, ILogger<CustomersModule> logger) =>
+        {
+            var serviceResult = await customerService.DeleteCustomer(id);
+
+            return serviceResult.Match(
+                        success: () => Results.NoContent(),
+                        failure: error =>
+                        {
+                            logger.LogError("Error while deleting customer: {@error}", serviceResult.ToProblemDetails());
+                            return serviceResult.ToProblemDetails();
+                        });
         });
     }
 }

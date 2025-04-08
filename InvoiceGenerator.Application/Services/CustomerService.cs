@@ -1,71 +1,92 @@
-using System;
+using InvoiceGenerator.Core.Requests.CustomerRequests;
 using InvoiceGenerator.Application.Configurations;
+using InvoiceGenerator.Core.Responses.ResultType;
+using InvoiceGenerator.Core.Validators.Customer;
+using InvoiceGenerator.Core.Responses.Errors;
+using InvoiceGenerator.Core.Responses;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.Core.Mappings;
-using InvoiceGenerator.Core.Models;
 using InvoiceGenerator.Core.Requests;
-using InvoiceGenerator.Core.Requests.CustomerRequests;
-using InvoiceGenerator.Core.Responses;
+using Microsoft.Extensions.Logging;
 
 namespace InvoiceGenerator.Application.Services;
 
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository customerRepository;
-    public CustomerService(ICustomerRepository customerRepository)
+    public ILogger<CustomerService> logger { get; }
+
+    public CustomerService(ICustomerRepository customerRepository, ILogger<CustomerService> logger)
     {
+        this.logger = logger;
         this.customerRepository = customerRepository;
     }
 
-    public async Task<Customer> CreateCustomer(CreateCustomerRequestDto customerDto)
+    public async Task<Result<IEnumerable<CustomerResponseDto>>> GetAllCustomers()
     {
-        if(customerDto is null) {
-            throw new ArgumentNullException(nameof(Customer));
+        var customers =  await customerRepository.GetAllCustomersAsync();
+        var customersResponse = customers.Select(x => x.MapToCustomerResponse());
+        return Result<IEnumerable<CustomerResponseDto>>.Success(customersResponse);
+    }
+
+    public async Task<Result<CustomerResponseDto>> GetCustomerAsync(int id)
+    {
+        var customer =  await customerRepository.GetCustomerAsync(id);
+
+        if(customer is null) {
+            logger.LogError("Customer with id: {Id} does not exist in database", id);
+            return Error.NotFound<CustomerResponseDto>(id);
+        }
+
+        return Result<CustomerResponseDto>.Success(customer.MapToCustomerResponse());
+    }
+
+    public async Task<Result<CustomerResponseDto>> CreateCustomer(CreateCustomerRequestDto customerDto)
+    {
+        var validationResult = new CreateCustomerValidator().ValidateAsync(customerDto);
+        if(!validationResult.Result.IsValid) {
+            var errors = validationResult.Result.Errors.Select(x => new Error(x.ErrorCode, x.ErrorMessage, ErrorType.Validation));
+            return Error.ValidationError<CreateCustomerRequestDto>(errors);
         }
 
         var customer = customerDto.MapToCustomer();
         var newCustomer =  await customerRepository.CreateCustomerAsync(customer);
 
         if(newCustomer is null) {
-            throw new NullReferenceException($"Customer with Id: {customer.Id} was not created");
+          return new Error("Create.Error","Customer was not created", ErrorType.Failure);
         }
 
-        return newCustomer;
+        return newCustomer.MapToCustomerResponse();
     }
 
-    public async Task DeleteCustomer(int id)
+    public async Task<Result<CustomerResponseDto>> UpdateCustomer(int customerId, UpdateCustomerRequestDto customerDto)
+    {
+        var customer = await customerRepository.GetCustomerAsync(customerId, trackChanges: true);
+        
+        if(customer is null) {
+            return Error.NotFound<CustomerResponseDto>(customerId);
+        }
+
+        customerDto.MapToCustomer(customer);
+        var updatedCustomer = await customerRepository.UpdateCustomerAsync(customer);
+
+        if(updatedCustomer is null) {
+            return Error.NotFound<CustomerResponseDto>(customerId);
+        }
+
+        return updatedCustomer.MapToCustomerResponse();
+    }
+
+    
+    public async Task<Result> DeleteCustomer(int id)
     {
         var customer = await customerRepository.GetCustomerAsync(id);
 
         if(customer is null){
-            throw new NullReferenceException($"Customer with Id: {id} was not found");
+            return Result.Failure(Error.NotFound<CustomerResponseDto>(id));
         }
 
-        await customerRepository.DeleteCustomerAsync(id);
-    }
-
-    public async Task<IEnumerable<Customer>> GetAllCustomers()
-    {
-        return await customerRepository.GetAllCustomersAsync();
-    }
-
-    public async Task<CustomerResponseDto> GetCustomerAsync(int id)
-    {
-        var customer =  await customerRepository.GetCustomerAsync(id)
-            ?? throw new DllNotFoundException("Customer with Id was not found");
-
-        return customer.MapToCustomerResponse();
-    }
-
-    public async Task<Customer> UpdateCustomer(int customerId, UpdateCustomerRequestDto customerDto)
-    {
-        var customer = await customerRepository.GetCustomerAsync(customerId, trackChanges: true);
-
-        if(customer is null) {
-            throw new NullReferenceException($"Customer with Id: {customerId} was not found");
-        }
-
-        customerDto.MapToCustomer(customer);
-        return await customerRepository.UpdateCustomerASync(customer);
+        await customerRepository.DeleteCustomerAsync(id); 
+        return Result.Success();
     }
 }

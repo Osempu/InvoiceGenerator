@@ -5,7 +5,6 @@ namespace InvoiceGenerator.Core.Requests;
 
 public class CreateCustomerRequestDto
 {
-    public int Id { get; init; }
     public string? Name { get; init; }
     public string? Description { get; init; }
     

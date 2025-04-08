@@ -31,7 +31,8 @@ namespace InvoiceGenerator.Infrastructure.Repositories
 
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync(bool trackChanges = false)
         {
-            var customers = trackChanges ? await context.Customers.ToListAsync() : await context.Customers.AsNoTracking().ToListAsync();
+            var customers = trackChanges ? await context.Customers.Include(x => x.Addresses).ToListAsync() 
+                                         : await context.Customers.Include(x => x.Addresses).AsNoTracking().ToListAsync();
             return customers;
         }
 
@@ -40,13 +41,14 @@ namespace InvoiceGenerator.Infrastructure.Repositories
             var customer = trackChanges ? await context.Customers
                                                 .Include(x => x.Addresses)
                                                 .FirstOrDefaultAsync(x => x.Id == id)
-                                          : await context.Customers.AsNoTracking()
+                                          : await context.Customers
+                                                .AsNoTracking()
                                                 .Include(x => x.Addresses)
                                                 .FirstOrDefaultAsync(x => x.Id == id);
             return customer;
         }
 
-        public async Task<Customer?> UpdateCustomerASync(Customer customer)
+        public async Task<Customer?> UpdateCustomerAsync(Customer customer)
         {
             context.Entry(customer).State = EntityState.Modified;
             await context.SaveChangesAsync();

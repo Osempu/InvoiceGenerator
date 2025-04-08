@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using InvoiceGenerator.Core.Models;
 
 namespace InvoiceGenerator.Core.Responses.AddressResponses;

@@ -13,7 +13,6 @@ public static class CustomerMappings
     public static Customer MapToCustomer(this CreateCustomerRequestDto customerRequest)
     {
         return new Customer {
-            Id = customerRequest.Id,
             Name = customerRequest.Name,
             Description = customerRequest.Description,
             Addresses = customerRequest.Addresses?
@@ -28,7 +27,7 @@ public static class CustomerMappings
             Id = customer.Id,
             Name = customer.Name,
             Description = customer.Description,
-            AddressesResponseDto = customer.Addresses?
+            Addresses = customer.Addresses?
                 .Select(x => x.MapToAddressResponseDto()).ToList() ?? Enumerable.Empty<AddressResponseDto>().ToList()
         };
     }
