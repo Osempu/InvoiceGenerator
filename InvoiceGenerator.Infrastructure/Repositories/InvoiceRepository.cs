@@ -1,4 +1,4 @@
-using InvoiceGenerator.Core.Contracts;
+using InvoiceGenerator.Application.Contracts;
 using InvoiceGenerator.Core.Models;
 using InvoiceGenerator.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace InvoiceGenerator.Infrastructure.Repositories
             this.context = context;
         }
 
-        public async Task<Invoice> CreateInvoiceAsync(Invoice invoice)
+        public async Task<Invoice?> CreateInvoiceAsync(Invoice invoice)
         {
             var newInvoice = context.Add(invoice).Entity;
             await context.SaveChangesAsync();
@@ -22,7 +22,9 @@ namespace InvoiceGenerator.Infrastructure.Repositories
 
         public async Task DeleteInvoiceAsync(int id)
         {
-            var invoice = await context.Invoices.FirstOrDefaultAsync(x => x.Id == id);
+            var invoice = await context.Invoices.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new NullReferenceException($"Invoice with id {id} does not exist in database");
+
             context.Remove(invoice);
             await context.SaveChangesAsync();
         }
@@ -30,17 +32,17 @@ namespace InvoiceGenerator.Infrastructure.Repositories
         public async Task<IEnumerable<Invoice>> GetAllInvoicesAsync()
         {
             var invoices = await context.Invoices.AsNoTracking()
-                                                    .ToListAsync();
+                                                .ToListAsync();
             return invoices;
         }
 
-        public async Task<Invoice> GetInvoiceAsync(int id)
+        public async Task<Invoice?> GetInvoiceAsync(int id)
         {
             return await context.Invoices.AsNoTracking()
                                          .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<Invoice> UpdateInvoiceAsync(Invoice invoice)
+        public async Task<Invoice?> UpdateInvoiceAsync(Invoice invoice)
         {
             context.Entry(invoice).State = EntityState.Modified;
             await context.SaveChangesAsync();

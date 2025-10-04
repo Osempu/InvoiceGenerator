@@ -8,22 +8,35 @@ namespace InvoiceGenerator.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Invoice> builder)
         {
+            builder.ToTable("Invoices");
+            
             builder.HasKey(x => x.Id);
 
-            builder.Property( x => x.Date)
+            builder.Property( x => x.Identifier)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+            builder.Property( x => x.CreatedAt)
                     .IsRequired()
                     .HasDefaultValue(DateOnly.FromDateTime(DateTime.Now));
 
-            builder.Property( x => x.ValidUntil)
+            builder.Property( x => x.ValidStartDate)
                     .IsRequired()
-                    .HasDefaultValue(DateOnly.FromDateTime(DateTime.Now.AddDays(9)));
+                    .HasDefaultValue(DateOnly.FromDateTime(DateTime.Now));
+
+            builder.Property( x => x.DueDate)
+                    .IsRequired();
             
-            builder.HasOne(x => x.Client)
+            builder.HasOne(x => x.Customer)
                     .WithMany(x => x.Invoices)
-                    .HasForeignKey(x => x.ClientId);
+                    .HasForeignKey(x => x.CustomerId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.InvoiceDetails)
-                    .WithOne( x=> x.Invoice);
+                    .WithOne( x=> x.Invoice)
+                    .HasForeignKey<InvoiceDetails>(x => x.InvoiceId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                    
         }
     }
 }

@@ -1,3 +1,4 @@
+using InvoiceGenerator.Application.Contracts;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.Core.Models;
 using InvoiceGenerator.Infrastructure.Data;
@@ -25,21 +26,30 @@ namespace InvoiceGenerator.Infrastructure.Repositories
         {
             var invoiceDetails = context.InvoiceDetails?.AsNoTracking()
                                                         .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (invoiceDetails is null)
+            {
+                throw new InvalidOperationException($"InvoiceDetails with id {id} not found.");
+            }
             context.Remove(invoiceDetails);
             await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<InvoiceDetails>> GetAllInvoiceDetailsAsync()
         {
-            var invoiceDetails =  await context.InvoiceDetails.AsNoTracking()
+            var invoiceDetails = await context.InvoiceDetails.AsNoTracking()
                                                                 .ToListAsync();
             return invoiceDetails;
         }
 
-        public async Task<InvoiceDetails?> GetInvoiceDetailsAsync(int id)
+        public async Task<InvoiceDetails> GetInvoiceDetailsAsync(int id)
         {
             var invoiceDetails = await context.InvoiceDetails.AsNoTracking()
                                                                 .FirstOrDefaultAsync(x => x.Id == id);
+            if (invoiceDetails == null)
+            {
+                throw new InvalidOperationException($"InvoiceDetails with id {id} not found.");
+            }
             return invoiceDetails;
         }
 
