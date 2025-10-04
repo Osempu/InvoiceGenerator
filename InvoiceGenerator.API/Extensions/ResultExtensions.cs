@@ -5,9 +5,10 @@ namespace InvoiceGenerator.API.Extensions;
 
 public static class ResultExtensions
 {
-    public static IResult ToProblemDetails(this Result result) 
+    public static IResult ToProblemDetails(this Result result)
     {
-        if(result.IsSuccess) {
+        if (result.IsSuccess)
+        {
             throw new InvalidOperationException();
         }
 
@@ -21,7 +22,7 @@ public static class ResultExtensions
             });
     }
 
-    private static int GetStatusCode(ErrorType errorType) => 
+    private static int GetStatusCode(ErrorType errorType) =>
         errorType switch
         {
             ErrorType.NotFound => StatusCodes.Status404NotFound,

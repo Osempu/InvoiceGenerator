@@ -24,16 +24,17 @@ public class CustomerService : ICustomerService
 
     public async Task<Result<IEnumerable<CustomerResponseDto>>> GetAllCustomers()
     {
-        var customers =  await customerRepository.GetAllCustomersAsync();
+        var customers = await customerRepository.GetAllCustomersAsync();
         var customersResponse = customers.Select(x => x.MapToCustomerResponse());
         return Result<IEnumerable<CustomerResponseDto>>.Success(customersResponse);
     }
 
     public async Task<Result<CustomerResponseDto>> GetCustomerAsync(int id)
     {
-        var customer =  await customerRepository.GetCustomerAsync(id);
+        var customer = await customerRepository.GetCustomerAsync(id);
 
-        if(customer is null) {
+        if (customer is null)
+        {
             logger.LogError("Customer with id: {Id} does not exist in database", id);
             return Error.NotFound<CustomerResponseDto>(id);
         }
@@ -43,17 +44,19 @@ public class CustomerService : ICustomerService
 
     public async Task<Result<CustomerResponseDto>> CreateCustomer(CreateCustomerRequestDto customerDto)
     {
-        var validationResult = new CreateCustomerValidator().ValidateAsync(customerDto);
-        if(!validationResult.Result.IsValid) {
-            var errors = validationResult.Result.Errors.Select(x => new Error(x.ErrorCode, x.ErrorMessage, ErrorType.Validation));
+        var validationResult = await new CreateCustomerValidator().ValidateAsync(customerDto);
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(x => new Error(x.ErrorCode, x.ErrorMessage, ErrorType.Validation));
             return Error.ValidationError<CreateCustomerRequestDto>(errors);
         }
 
         var customer = customerDto.MapToCustomer();
-        var newCustomer =  await customerRepository.CreateCustomerAsync(customer);
+        var newCustomer = await customerRepository.CreateCustomerAsync(customer);
 
-        if(newCustomer is null) {
-          return new Error("Create.Error","Customer was not created", ErrorType.Failure);
+        if (newCustomer is null)
+        {
+            return new Error("Create.Error", "Customer was not created", ErrorType.Failure);
         }
 
         return newCustomer.MapToCustomerResponse();
@@ -62,31 +65,34 @@ public class CustomerService : ICustomerService
     public async Task<Result<CustomerResponseDto>> UpdateCustomer(int customerId, UpdateCustomerRequestDto customerDto)
     {
         var customer = await customerRepository.GetCustomerAsync(customerId, trackChanges: true);
-        
-        if(customer is null) {
+
+        if (customer is null)
+        {
             return Error.NotFound<CustomerResponseDto>(customerId);
         }
 
         customerDto.MapToCustomer(customer);
         var updatedCustomer = await customerRepository.UpdateCustomerAsync(customer);
 
-        if(updatedCustomer is null) {
+        if (updatedCustomer is null)
+        {
             return Error.NotFound<CustomerResponseDto>(customerId);
         }
 
         return updatedCustomer.MapToCustomerResponse();
     }
 
-    
+
     public async Task<Result> DeleteCustomer(int id)
     {
         var customer = await customerRepository.GetCustomerAsync(id);
 
-        if(customer is null){
+        if (customer is null)
+        {
             return Result.Failure(Error.NotFound<CustomerResponseDto>(id));
         }
 
-        await customerRepository.DeleteCustomerAsync(id); 
+        await customerRepository.DeleteCustomerAsync(id);
         return Result.Success();
     }
 }

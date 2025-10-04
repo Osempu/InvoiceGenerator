@@ -17,7 +17,8 @@ public class RequestContextLoggingMiddleware
     {
         string correlationId = GetCorrelationId(context);
 
-        using(LogContext.PushProperty("CorrelationId", correlationId)){
+        using (LogContext.PushProperty("CorrelationId", correlationId))
+        {
             return _next.Invoke(context);
         }
     }

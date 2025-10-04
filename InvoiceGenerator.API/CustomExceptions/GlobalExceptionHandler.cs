@@ -8,11 +8,11 @@ public class GlobalExceptionHandler(
         IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext, 
-        Exception exception, 
+        HttpContext httpContext,
+        Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Exception Ocurred: {Message}", exception.Message);   
+        logger.LogError(exception, "Exception Ocurred: {Message}", exception.Message);
 
         var problemDetails = new ProblemDetails
         {

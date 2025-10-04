@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceGenerator.Infrastruc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceGenerator.API", "InvoiceGenerator.API\InvoiceGenerator.API.csproj", "{0ABEE974-9CAC-49A2-8487-84E169038DCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceGenerator.Application", "InvoiceGenerator.Application\InvoiceGenerator.Application.csproj", "{CB50EBA6-7D83-4404-9844-7EE71BE2A1AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceGenerator.Application", "InvoiceGenerator.Application\InvoiceGenerator.Application.csproj", "{CB50EBA6-7D83-4404-9844-7EE71BE2A1AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

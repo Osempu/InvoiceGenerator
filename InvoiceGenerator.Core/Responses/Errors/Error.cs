@@ -15,9 +15,9 @@ public sealed record Error
 
     public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure, null);
 
-    public static Error NotFound(string code, string description) 
+    public static Error NotFound(string code, string description)
         => new(code, description, ErrorType.NotFound);
-    public static Error Validation(string code, string desciption, IEnumerable<Error> errors) 
+    public static Error Validation(string code, string desciption, IEnumerable<Error> errors)
         => new(code, desciption, ErrorType.Validation, errors);
 
     public static Error Conflict(string code, string description)
@@ -28,14 +28,15 @@ public sealed record Error
 
     public static Error NotFound<T>(int id) => new Error("NotFound", $"{GetRecordName<T>()} with id: {id} was not found", ErrorType.NotFound);
 
-    public static Error ValidationError<T>(IEnumerable<Error> errors) {
+    public static Error ValidationError<T>(IEnumerable<Error> errors)
+    {
         return new Error($"{GetRecordName<T>()}.Validation.Error", "One or more validation errors ocurred", ErrorType.Validation, errors);
     }
-    
-    private static string GetRecordName<T>() => 
+
+    private static string GetRecordName<T>() =>
         typeof(T).Name.Replace("Dto", string.Empty)
                     .Replace("Request", string.Empty)
-                    .Replace("Response", string.Empty);  
+                    .Replace("Response", string.Empty);
 
 }
 
