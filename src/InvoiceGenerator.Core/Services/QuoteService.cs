@@ -7,18 +7,22 @@ namespace InvoiceGenerator.Core.Services
     {
         public QuoteService()
         {
-               
+
         }
 
         public InvoiceDetails CalculateServicesCost(InvoiceDetails invoiceDetails)
         {
-            foreach (var service in invoiceDetails.InvoiceLineItems!)
+            if (invoiceDetails.InvoiceLineItems != null && invoiceDetails.InvoiceLineItems.Count > 0)
             {
-                // service.Total = service.Quantity * service.UnitPrice;
-                // invoiceDetails.SubTotal += service.Total;
-            }
+                foreach (var lineItem in invoiceDetails.InvoiceLineItems!)
+                {
+                    decimal price = lineItem.Item?.Price ?? 0m;
+                    invoiceDetails.SubTotal += price * lineItem.Quantity;
+                }
 
-            invoiceDetails.Total = invoiceDetails.SubTotal + invoiceDetails.Tax;
+                invoiceDetails.Total = invoiceDetails.SubTotal + invoiceDetails.Tax;
+                return invoiceDetails;
+            }
 
             return invoiceDetails;
         }

@@ -1,13 +1,13 @@
 using InvoiceGenerator.Core.Requests.CustomerRequests;
 using InvoiceGenerator.Core.Responses.ResultType;
+using InvoiceGenerator.Application.Options;
 using InvoiceGenerator.API.Extensions;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.Core.Requests;
+using InvoiceGenerator.API.Filters;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using Carter;
-using InvoiceGenerator.API.Filters;
-using Company.ClassLibrary1;
-using Microsoft.Extensions.Options;
 
 namespace InvoiceGenerator.API.Endpoints;
 

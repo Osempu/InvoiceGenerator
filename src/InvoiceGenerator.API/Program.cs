@@ -2,20 +2,22 @@ using InvoiceGenerator.Infrastructure.Repositories;
 using InvoiceGenerator.Application.Configurations;
 using InvoiceGenerator.Application.Services;
 using InvoiceGenerator.Infrastructure.Data;
+using InvoiceGenerator.Application.Options;
 using InvoiceGenerator.API.Controllers;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.API.Extensions;
 using InvoiceGenerator.API.Filters;
 using Serilog;
 using Carter;
-using Company.ClassLibrary1;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.Configure<CustomSettings>(builder.Configuration.GetSection("CustomSettings"));
+builder.Services.AddOptions<CustomSettings>()
+    .Bind(builder.Configuration.GetSection("CustomSettings"))
+    .ValidateDataAnnotations();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -55,6 +57,7 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Invoice Generator API v1");
     });
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseSerilogRequestLogging(options =>

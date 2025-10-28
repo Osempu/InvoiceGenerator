@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Company.ClassLibrary1;
+namespace InvoiceGenerator.Application.Options;
 
 public class CustomSettings
 {
