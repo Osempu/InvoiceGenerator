@@ -33,7 +33,7 @@ public class CustomersModule : CarterModule
                 httpContext.TraceIdentifier, "GetAllCustomers");
             logger.LogInformation("Retrieving all customers");
 
-            Console.WriteLine($"Application Name: {customSettings.Value.ApplicationName}, Version: {customSettings.Value.Version}");
+            logger.LogInformation("Application Name: {ApplicationName}, Version: {Version}", customSettings.Value.ApplicationName, customSettings.Value.Version);
 
             var serviceResult = await customerService.GetAllCustomers();
 
