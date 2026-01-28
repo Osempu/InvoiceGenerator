@@ -7,8 +7,10 @@ using InvoiceGenerator.API.Controllers;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.API.Extensions;
 using InvoiceGenerator.API.Filters;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Carter;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,12 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<InvoiceController>();
-builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SBDevConnection"))
+           .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name })
+           .EnableSensitiveDataLogging();
+});
 builder.Services.AddCustomErrorHandling();
 builder.Services.ConfigureProblemDetails();
 builder.Services.AddCarter();
@@ -48,6 +55,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -70,9 +83,25 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 app.UseGlobalErrorHandling();
-app.UseHttpsRedirection();
+
+// Only use HTTPS redirection when not in Docker (Docker uses HTTP only)
+if (!app.Environment.EnvironmentName.Equals("Docker", StringComparison.OrdinalIgnoreCase))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowAll");
+
+app.MapGet("users/me", (ClaimsPrincipal claimsPrincipal) =>
+{
+    return claimsPrincipal.Claims.ToDictionary(c => c.Type, c => c.Value);
+}).RequireAuthorization();
+
 
 app.MapCarter();
 app.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.Run();

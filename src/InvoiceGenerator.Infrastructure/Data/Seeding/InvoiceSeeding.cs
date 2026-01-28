@@ -9,19 +9,18 @@ public static class InvoiceSeeding
     public static void InvoiceSeed(this ModelBuilder builder)
     {
         builder.Entity<Invoice>().HasData(
-            new Invoice { Id = 1, Identifier = "INV-467958", ValidStartDate = new DateOnly(2024, 10, 19).AddDays(5), DueDate = new DateOnly(2024, 10, 19).AddDays(30), CustomerId = 1 },
-            new Invoice { Id = 2, Identifier = "INV-134678", ValidStartDate = new DateOnly(2024, 10, 17).AddDays(5), DueDate = new DateOnly(2024, 10, 17).AddDays(30), CustomerId = 1 },
-            new Invoice { Id = 3, Identifier = "INV-258795", ValidStartDate = new DateOnly(2024, 10, 15).AddDays(5), DueDate = new DateOnly(2024, 10, 15).AddDays(30), CustomerId = 2 },
-            new Invoice { Id = 4, Identifier = "INV-462579", ValidStartDate = new DateOnly(2024, 10, 19).AddDays(5), DueDate = new DateOnly(2024, 10, 19).AddDays(30), CustomerId = 3 },
-            new Invoice { Id = 5, Identifier = "INV-231645", ValidStartDate = new DateOnly(2024, 10, 19).AddDays(5), DueDate = new DateOnly(2024, 10, 19).AddDays(30), CustomerId = 3 },
-            new Invoice { Id = 6, Identifier = "INV-465281", ValidStartDate = new DateOnly(2024, 10, 14).AddDays(5), DueDate = new DateOnly(2024, 10, 14).AddDays(30), CustomerId = 4 },
-            new Invoice { Id = 7, Identifier = "INV-356891", ValidStartDate = new DateOnly(2024, 10, 14).AddDays(5), DueDate = new DateOnly(2024, 10, 14).AddDays(30), CustomerId = 4 },
-            new Invoice { Id = 8, Identifier = "INV-197846", ValidStartDate = new DateOnly(2024, 10, 17).AddDays(5), DueDate = new DateOnly(2024, 10, 17).AddDays(30), CustomerId = 4 },
-            new Invoice { Id = 9, Identifier = "INV-1387541", ValidStartDate = new DateOnly(2024, 10, 20).AddDays(5), DueDate = new DateOnly(2024, 10, 20).AddDays(30), CustomerId = 5 },
-            new Invoice { Id = 10, Identifier = "INV-978548", ValidStartDate = new DateOnly(2024, 10, 20).AddDays(5), DueDate = new DateOnly(2024, 10, 20).AddDays(30), CustomerId = 5 },
-            new Invoice { Id = 11, Identifier = "INV-159632", ValidStartDate = new DateOnly(2024, 10, 11).AddDays(5), DueDate = new DateOnly(2024, 10, 11).AddDays(30), CustomerId = 5 },
-            new Invoice { Id = 12, Identifier = "INV-1547862", ValidStartDate = new DateOnly(2024, 10, 8).AddDays(5), DueDate = new DateOnly(2024, 10, 8).AddDays(30), CustomerId = 2 }
-
+            new Invoice { Id = 1, Identifier = "INV-467958", CreatedAt = new DateOnly(2024, 10, 19), ValidStartDate = new DateOnly(2024, 10, 24), DueDate = new DateOnly(2024, 11, 18), CustomerId = 1 },
+            new Invoice { Id = 2, Identifier = "INV-134678", CreatedAt = new DateOnly(2024, 10, 17), ValidStartDate = new DateOnly(2024, 10, 22), DueDate = new DateOnly(2024, 11, 16), CustomerId = 1 },
+            new Invoice { Id = 3, Identifier = "INV-258795", CreatedAt = new DateOnly(2024, 10, 15), ValidStartDate = new DateOnly(2024, 10, 20), DueDate = new DateOnly(2024, 11, 14), CustomerId = 2 },
+            new Invoice { Id = 4, Identifier = "INV-462579", CreatedAt = new DateOnly(2024, 10, 19), ValidStartDate = new DateOnly(2024, 10, 24), DueDate = new DateOnly(2024, 11, 18), CustomerId = 3 },
+            new Invoice { Id = 5, Identifier = "INV-231645", CreatedAt = new DateOnly(2024, 10, 19), ValidStartDate = new DateOnly(2024, 10, 24), DueDate = new DateOnly(2024, 11, 18), CustomerId = 3 },
+            new Invoice { Id = 6, Identifier = "INV-465281", CreatedAt = new DateOnly(2024, 10, 14), ValidStartDate = new DateOnly(2024, 10, 19), DueDate = new DateOnly(2024, 11, 13), CustomerId = 4 },
+            new Invoice { Id = 7, Identifier = "INV-356891", CreatedAt = new DateOnly(2024, 10, 14), ValidStartDate = new DateOnly(2024, 10, 19), DueDate = new DateOnly(2024, 11, 13), CustomerId = 4 },
+            new Invoice { Id = 8, Identifier = "INV-197846", CreatedAt = new DateOnly(2024, 10, 17), ValidStartDate = new DateOnly(2024, 10, 22), DueDate = new DateOnly(2024, 11, 16), CustomerId = 4 },
+            new Invoice { Id = 9, Identifier = "INV-1387541", CreatedAt = new DateOnly(2024, 10, 20), ValidStartDate = new DateOnly(2024, 10, 25), DueDate = new DateOnly(2024, 11, 19), CustomerId = 5 },
+            new Invoice { Id = 10, Identifier = "INV-978548", CreatedAt = new DateOnly(2024, 10, 20), ValidStartDate = new DateOnly(2024, 10, 25), DueDate = new DateOnly(2024, 11, 19), CustomerId = 5 },
+            new Invoice { Id = 11, Identifier = "INV-159632", CreatedAt = new DateOnly(2024, 10, 11), ValidStartDate = new DateOnly(2024, 10, 16), DueDate = new DateOnly(2024, 11, 10), CustomerId = 5 },
+            new Invoice { Id = 12, Identifier = "INV-1547862", CreatedAt = new DateOnly(2024, 10, 8), ValidStartDate = new DateOnly(2024, 10, 13), DueDate = new DateOnly(2024, 11, 7), CustomerId = 2 }
         );
 
         builder.Entity<InvoiceDetails>().HasData(

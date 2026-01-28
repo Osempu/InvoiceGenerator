@@ -1,0 +1,42 @@
+services:
+  invoicegenerator.api:
+    image: ${DOCKER_REGISTRY-}invoicegenerator.api
+    container_name: invoicegenerator.api
+    build:
+      context: .
+      dockerfile: src/InvoiceGenerator.API/Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      invoicegenerator.database:
+        condition: service_healthy
+
+  invoicegenerator.database:
+    image: postgres:latest
+    container_name: invoicegenerator.database
+    environment:
+      - POSTGRES_DB=invoicegenerator
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/database:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d invoicegenerator"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  invoicegenerator.identity:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: invoicegenerator.identity
+    command: start-dev
+    environment:
+      - KC_HEALTH_ENABLED=true
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./.containers/identity:/opt/keycloak/data
+    ports:
+      - "8080:8080"

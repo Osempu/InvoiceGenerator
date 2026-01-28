@@ -1,0 +1,11 @@
+services:
+  invoicegenerator.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__SBDevConnection=Server=invoicegenerator.database;Database=invoicegenerator;Port=5432;User Id=postgres;Password=postgres;
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

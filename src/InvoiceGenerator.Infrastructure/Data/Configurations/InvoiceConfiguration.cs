@@ -18,11 +18,11 @@ namespace InvoiceGenerator.Infrastructure.Data.Configurations
 
             builder.Property( x => x.CreatedAt)
                     .IsRequired()
-                    .HasDefaultValue(DateOnly.FromDateTime(DateTime.Now));
+                    .HasDefaultValueSql("CURRENT_DATE");
 
             builder.Property( x => x.ValidStartDate)
                     .IsRequired()
-                    .HasDefaultValue(DateOnly.FromDateTime(DateTime.Now));
+                    .HasDefaultValueSql("CURRENT_DATE");
 
             builder.Property( x => x.DueDate)
                     .IsRequired();

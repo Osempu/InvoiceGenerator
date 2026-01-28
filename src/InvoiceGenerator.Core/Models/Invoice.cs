@@ -4,7 +4,7 @@ namespace InvoiceGenerator.Core.Models
     {
         public int Id { get; set; }
         public string Identifier { get; set; } = "";
-        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateOnly CreatedAt { get; set; }
         public DateOnly ValidStartDate { get; set; }
         public DateOnly DueDate { get; set; }
 
