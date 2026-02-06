@@ -1,3 +1,5 @@
+using InvoiceGenerator.Infrastructure.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using InvoiceGenerator.Infrastructure.Repositories;
 using InvoiceGenerator.Application.Configurations;
 using InvoiceGenerator.Application.Services;
@@ -6,11 +8,12 @@ using InvoiceGenerator.Application.Options;
 using InvoiceGenerator.API.Controllers;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.API.Extensions;
-using InvoiceGenerator.API.Filters;
 using Microsoft.EntityFrameworkCore;
+using InvoiceGenerator.API.Filters;
+using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using Serilog;
 using Carter;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +25,50 @@ builder.Services.AddOptions<CustomSettings>()
     .ValidateDataAnnotations();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+
+//Move into a separate method later
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.CustomSchemaIds(id => id.FullName!.Replace('+', '-'));
+
+    options.AddSecurityDefinition("Keycloak", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            Implicit = new OpenApiOAuthFlow
+            {
+                AuthorizationUrl = new Uri(builder.Configuration["Keycloak:AuthorizationUrl"]!),
+                Scopes = new Dictionary<string, string>
+                {
+                   {"openid", "openid"},
+                   {"profile", "profile"}
+                }
+            }
+        }
+    });
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Keycloak",
+                    Type = ReferenceType.SecurityScheme
+                },
+                In = ParameterLocation.Header,
+                Name = "Bearer",
+                Scheme = "Bearer"
+            },
+            []
+        }
+    };
+
+    options.AddSecurityRequirement(securityRequirement);
+
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Invoice Generator API",
         Version = "v1",
@@ -43,6 +87,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddCustomErrorHandling();
 builder.Services.ConfigureProblemDetails();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.Configure<AuthenticationOptions>(builder.Configuration.GetSection("Authentication"));
+
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+
 builder.Services.AddCarter();
 builder.Services.AddControllers(options =>
 {
