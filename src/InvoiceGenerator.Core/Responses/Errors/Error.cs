@@ -26,6 +26,9 @@ public sealed record Error
     public static Error Failure(string code, string description)
         => new(code, description, ErrorType.Failure);
 
+    public static Error Unauthorized(string code, string description)
+        => new(code, description, ErrorType.Unauthorized);
+
     public static Error NotFound<T>(int id) => new Error("NotFound", $"{GetRecordName<T>()} with id: {id} was not found", ErrorType.NotFound);
 
     public static Error ValidationError<T>(IEnumerable<Error> errors)
@@ -45,5 +48,6 @@ public enum ErrorType
     Failure = 0,
     Validation = 1,
     NotFound = 2,
-    Conflict = 3
+    Conflict = 3,
+    Unauthorized = 4
 }
