@@ -1,23 +1,10 @@
 services:
   invoicegenerator.api:
     environment:
+      # Sets the environment to load appsettings.Docker.json which contains
+      # all Docker-specific URLs (Keycloak, database, etc.)
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:5000
-      - ConnectionStrings__SBDevConnection=Server=invoicegenerator.database;Database=invoicegenerator;Port=5432;User Id=postgres;Password=postgres;
-      # Keycloak settings for Docker networking
-      # Note: The API uses internal Docker network to reach Keycloak
-      # but tokens are issued with localhost issuer (from browser/Postman)
-      - Keycloak__BaseUrl=http://invoicegenerator.identity:8080
-      - Keycloak__TokenUrl=http://invoicegenerator.identity:8080/realms/invoice-generator-realm/protocol/openid-connect/token
-      - Keycloak__UserInfoUrl=http://invoicegenerator.identity:8080/realms/invoice-generator-realm/protocol/openid-connect/userinfo
-      - Keycloak__LogoutUrl=http://invoicegenerator.identity:8080/realms/invoice-generator-realm/protocol/openid-connect/logout
-      - Keycloak__AdminApiUrl=http://invoicegenerator.identity:8080/admin/realms/invoice-generator-realm
-      # Authentication settings - use internal URL for metadata but external issuer for token validation
-      - Authentication__MetadataUrl=http://invoicegenerator.identity:8080/realms/invoice-generator-realm/.well-known/openid-configuration
-      # Issuer must match what's in the token (external URL that user accessed)
-      - Authentication__Issuer=http://localhost:8080/realms/invoice-generator-realm
-      - Authentication__ValidateAudience=false
-      - Authentication__RequireHttpsMetadata=false
     ports:
       - "5000:5000"
     volumes:

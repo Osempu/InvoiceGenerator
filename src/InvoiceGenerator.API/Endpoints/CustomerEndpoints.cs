@@ -1,11 +1,9 @@
 using InvoiceGenerator.Core.Requests.CustomerRequests;
 using InvoiceGenerator.Core.Responses.ResultType;
-using InvoiceGenerator.Application.Options;
 using InvoiceGenerator.API.Extensions;
 using InvoiceGenerator.Core.Contracts;
 using InvoiceGenerator.Core.Requests;
 using InvoiceGenerator.API.Filters;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using Carter;
 
@@ -26,14 +24,11 @@ public class CustomersModule : CarterModule
         app.MapGet("/", async (
             [FromServices] ICustomerService customerService,
             [FromServices] ILogger<CustomersModule> logger,
-            HttpContext httpContext,
-            IOptions<CustomSettings> customSettings) =>
+            HttpContext httpContext) =>
         {
             using var activity = logger.BeginScope("CorrelationId: {CorrelationId}, Operation: {Operation}",
                 httpContext.TraceIdentifier, "GetAllCustomers");
             logger.LogInformation("Retrieving all customers");
-
-            logger.LogInformation("Application Name: {ApplicationName}, Version: {Version}", customSettings.Value.ApplicationName, customSettings.Value.Version);
 
             var serviceResult = await customerService.GetAllCustomers();
 
