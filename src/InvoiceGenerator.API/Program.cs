@@ -65,4 +65,16 @@ app.UseAuthorization();
 app.MapCarter();
 app.MapControllers();
 
-app.Run();
+await app.StartAsync();
+
+if (app.Environment.IsDevelopment())
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    foreach (var url in app.Urls)
+    {
+        logger.LogInformation("Now listening on: {Url}", url);
+    }
+    logger.LogInformation("Application is ready.");
+}
+
+await app.WaitForShutdownAsync();

@@ -40,3 +40,13 @@ services:
       - ./.containers/identity:/opt/keycloak/data
     ports:
       - "8080:8080"
+
+  invoicegenerator.seq:
+    image: datalust/seq:latest
+    container_name: invoicegenerator.seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_PASSWORD=admin
+    ports:
+      - "5341:5341"
+      - "8081:80"
