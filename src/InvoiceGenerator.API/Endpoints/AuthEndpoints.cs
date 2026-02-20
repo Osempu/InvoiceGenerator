@@ -182,11 +182,3 @@ public sealed class AuthEndpoints : ICarterModule
         return Results.Ok(user);
     }
 }
-
-/// <summary>
-/// Request DTO for logout operation.
-/// </summary>
-public sealed record LogoutRequest
-{
-    public required string RefreshToken { get; init; }
-}
