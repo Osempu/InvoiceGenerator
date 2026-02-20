@@ -3,6 +3,7 @@ using System;
 using InvoiceGenerator.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,13 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InvoiceGenerator.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260113225303_Pending migration")]
+    partial class Pendingmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.12")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -237,7 +240,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("date")
-                        .HasDefaultValueSql("CURRENT_DATE");
+                        .HasDefaultValue(new DateOnly(2026, 1, 13));
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("integer");
@@ -253,7 +256,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                     b.Property<DateOnly>("ValidStartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("date")
-                        .HasDefaultValueSql("CURRENT_DATE");
+                        .HasDefaultValue(new DateOnly(2026, 1, 13));
 
                     b.HasKey("Id");
 
@@ -265,7 +268,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateOnly(2024, 10, 19),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 1,
                             DueDate = new DateOnly(2024, 11, 18),
                             Identifier = "INV-467958",
@@ -274,7 +277,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 1,
                             DueDate = new DateOnly(2024, 11, 16),
                             Identifier = "INV-134678",
@@ -283,7 +286,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateOnly(2024, 10, 15),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 2,
                             DueDate = new DateOnly(2024, 11, 14),
                             Identifier = "INV-258795",
@@ -292,7 +295,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateOnly(2024, 10, 19),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 3,
                             DueDate = new DateOnly(2024, 11, 18),
                             Identifier = "INV-462579",
@@ -301,7 +304,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateOnly(2024, 10, 19),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 3,
                             DueDate = new DateOnly(2024, 11, 18),
                             Identifier = "INV-231645",
@@ -310,7 +313,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateOnly(2024, 10, 14),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 4,
                             DueDate = new DateOnly(2024, 11, 13),
                             Identifier = "INV-465281",
@@ -319,7 +322,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateOnly(2024, 10, 14),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 4,
                             DueDate = new DateOnly(2024, 11, 13),
                             Identifier = "INV-356891",
@@ -328,7 +331,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateOnly(2024, 10, 17),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 4,
                             DueDate = new DateOnly(2024, 11, 16),
                             Identifier = "INV-197846",
@@ -337,7 +340,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateOnly(2024, 10, 20),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 5,
                             DueDate = new DateOnly(2024, 11, 19),
                             Identifier = "INV-1387541",
@@ -346,7 +349,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateOnly(2024, 10, 20),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 5,
                             DueDate = new DateOnly(2024, 11, 19),
                             Identifier = "INV-978548",
@@ -355,7 +358,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateOnly(2024, 10, 11),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 5,
                             DueDate = new DateOnly(2024, 11, 10),
                             Identifier = "INV-159632",
@@ -364,7 +367,7 @@ namespace InvoiceGenerator.Infrastructure.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateOnly(2024, 10, 8),
+                            CreatedAt = new DateOnly(2026, 1, 13),
                             CustomerId = 2,
                             DueDate = new DateOnly(2024, 11, 7),
                             Identifier = "INV-1547862",

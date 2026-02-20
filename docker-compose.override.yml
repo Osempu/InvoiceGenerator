@@ -1,0 +1,14 @@
+services:
+  invoicegenerator.api:
+    environment:
+      # Sets the environment to load appsettings.Docker.json which contains
+      # all Docker-specific URLs (Keycloak, database, etc.)
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      - invoicegenerator.identity

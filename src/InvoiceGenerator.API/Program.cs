@@ -1,62 +1,41 @@
-using InvoiceGenerator.Infrastructure.Repositories;
-using InvoiceGenerator.Application.Configurations;
-using InvoiceGenerator.Application.Services;
-using InvoiceGenerator.Infrastructure.Data;
-using InvoiceGenerator.Application.Options;
-using InvoiceGenerator.API.Controllers;
-using InvoiceGenerator.Core.Contracts;
-using InvoiceGenerator.API.Extensions;
-using InvoiceGenerator.API.Filters;
-using Serilog;
 using Carter;
+using InvoiceGenerator.Infrastructure.Authentication;
+using InvoiceGenerator.API.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddOptions<CustomSettings>()
-    .Bind(builder.Configuration.GetSection("CustomSettings"))
-    .ValidateDataAnnotations();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "Invoice Generator API",
-        Version = "v1",
-        Description = "An API for managing invoices, customers, and items"
-    });
-});
+var keycloakSettings = builder.Configuration
+    .GetSection(KeycloakSettings.SectionName)
+    .Get<KeycloakSettings>()
+    ?? throw new InvalidOperationException("Keycloak settings are not configured.");
 
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<InvoiceController>();
-builder.Services.AddDbContext<AppDbContext>();
-builder.Services.AddCustomErrorHandling();
-builder.Services.ConfigureProblemDetails();
-builder.Services.AddCarter();
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<AuditLogFilter>();
-});
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-});
+var isDevelopmentOrDocker = builder.Environment.IsDevelopment()
+    || builder.Environment.EnvironmentName.Equals("Docker", StringComparison.OrdinalIgnoreCase);
+
+builder.Services
+    .AddApplicationServices(builder.Configuration)
+    .AddSwaggerWithOAuth(keycloakSettings)
+    .AddKeycloakAuthentication(builder.Configuration)
+    .AddDatabase(builder.Configuration, isDevelopment: isDevelopmentOrDocker)
+    .AddCustomErrorHandling()
+    .ConfigureProblemDetails()
+    .AddApiEndpoints()
+    .AddDevelopmentCors();
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseDatabaseMigrations();
+
+if (isDevelopmentOrDocker)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Invoice Generator API v1");
-    });
+    app.UseSwaggerWithOAuth(keycloakSettings);
     app.UseDeveloperExceptionPage();
 }
 
@@ -69,10 +48,33 @@ app.UseSerilogRequestLogging(options =>
         diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
     };
 });
+
 app.UseGlobalErrorHandling();
-app.UseHttpsRedirection();
+
+// Only use HTTPS redirection when not in Docker (Docker uses HTTP only)
+if (!app.Environment.EnvironmentName.Equals("Docker", StringComparison.OrdinalIgnoreCase))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapCarter();
 app.MapControllers();
-app.Run();
+
+await app.StartAsync();
+
+if (app.Environment.IsDevelopment())
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    foreach (var url in app.Urls)
+    {
+        logger.LogInformation("Now listening on: {Url}", url);
+    }
+    logger.LogInformation("Application is ready.");
+}
+
+await app.WaitForShutdownAsync();
